@@ -1,6 +1,8 @@
 name: Open Unsigned App and Screenshot
 
 on:
+  push:
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -18,23 +20,32 @@ jobs:
       - name: Disable Gatekeeper (allow unsigned apps)
         run: sudo spctl --master-disable
 
+      - name: Remove quarantine attribute from the app
+        run: |
+          APP=$(find . -maxdepth 1 -name "*.app" | head -n 1)
+          echo "Removing quarantine attribute from $APP"
+          xattr -r -d com.apple.quarantine "$APP"
+
       - name: Launch the app and wait
         run: |
-          # Find the first .app bundle in the current directory
           APP=$(find . -maxdepth 1 -name "*.app" | head -n 1)
-          xattr -d -r com.apple.quarantine "$APP"
           echo "Launching app: $APP"
           open "$APP"
-          # Wait 2 seconds for the app to launch and display its window
+          # Wait 2 seconds for the app to launch
           sleep 2
 
-      - name: Take screenshot of the desktop
+      - name: Bring app to front using AppleScript
         run: |
-          # Take a screenshot without the sound; adjust options if needed
-          screencapture -x screenshot.png
+          APP_NAME=$(basename "$(find . -maxdepth 1 -name "*.app" | head -n 1)" .app)
+          echo "Bringing app $APP_NAME to the foreground"
+          osascript -e "tell application \"$APP_NAME\" to activate"
+          sleep 2
+
+      - name: Take screenshot of the desktop (should include the app window)
+        run: screencapture -x screenshot.png
 
       - name: Upload screenshot artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: screenshot
           path: screenshot.png
