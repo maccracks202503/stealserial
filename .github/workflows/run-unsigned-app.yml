@@ -39,9 +39,6 @@ jobs:
           APP_NAME=$(basename "$(find . -maxdepth 1 -name "*.app" | head -n 1)" .app)
           echo "Activating app $APP_NAME"
           osascript <<EOF
-          tell application "$APP_NAME"
-            activate
-          end tell
           tell application "System Events"
             set frontmost of first process whose name is "$APP_NAME" to true
           end tell
