@@ -1,8 +1,6 @@
 name: Open Unsigned App and Screenshot
 
 on:
-  push:
-    branches: [ main ]
   workflow_dispatch:
 
 jobs:
