@@ -1,0 +1,43 @@
+name: Run Unsigned App and Screenshot
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-app:
+    runs-on: macos-13
+    steps:
+      - name: Download Mac Hardware Info ZIP
+        run: |
+          curl -L -o Mac.Hardware.Info.zip "https://github.com/OpenBubbles/Mac-Hardware-Info/releases/download/v1.2.0/Mac.Hardware.Info.zip"
+
+      - name: Unzip the Downloaded File
+        run: |
+          unzip Mac.Hardware.Info.zip
+
+      - name: Find and Run the Unsigned App
+        run: |
+          # Locate the first .app directory
+          app_path=$(find . -type d -name "*.app" | head -n 1)
+          if [ -z "$app_path" ]; then
+            echo "No .app found!"
+            exit 1
+          fi
+          echo "Found app at: $app_path"
+          # Remove quarantine attribute (if present) to allow running unsigned apps
+          xattr -r -d com.apple.quarantine "$app_path" || true
+          # Launch the app in the background
+          open "$app_path"
+
+      - name: Wait and Capture Screenshot
+        run: |
+          sleep 2
+          # Take a screenshot and save it as screenshot.png
+          screencapture -x screenshot.png
+          ls -l screenshot.png
+
+      - name: Upload Screenshot Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: screenshot
+          path: screenshot.png
