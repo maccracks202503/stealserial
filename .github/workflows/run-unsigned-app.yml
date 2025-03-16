@@ -36,7 +36,7 @@ jobs:
 
       - name: Bring app to front using AppleScript
         run: |
-          APP_NAME=$(basename "$(find . -maxdepth 1 -name "*.app" | head -n 1)" .app)
+          APP_NAME=Mac\ Hardware\ Info.app
           echo "Activating app $APP_NAME"
           osascript <<EOF
           tell application "System Events"
