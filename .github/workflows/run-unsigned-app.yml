@@ -31,7 +31,7 @@ jobs:
 
       - name: Wait and Capture Screenshot
         run: |
-          sleep 2
+          sleep 4
           # Take a screenshot and save it as screenshot.png
           screencapture -x screenshot.png
           ls -l screenshot.png
