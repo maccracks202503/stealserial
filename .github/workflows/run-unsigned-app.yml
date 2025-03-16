@@ -26,22 +26,30 @@ jobs:
           echo "Removing quarantine attribute from $APP"
           xattr -r -d com.apple.quarantine "$APP"
 
-      - name: Launch the app and wait
+      - name: Launch the app
         run: |
           APP=$(find . -maxdepth 1 -name "*.app" | head -n 1)
           echo "Launching app: $APP"
           open "$APP"
-          # Wait 2 seconds for the app to launch
-          sleep 2
+          # Wait a few seconds for the app to launch
+          sleep 3
 
       - name: Bring app to front using AppleScript
         run: |
           APP_NAME=$(basename "$(find . -maxdepth 1 -name "*.app" | head -n 1)" .app)
-          echo "Bringing app $APP_NAME to the foreground"
-          osascript -e "tell application \"$APP_NAME\" to activate"
-          sleep 2
+          echo "Activating app $APP_NAME"
+          osascript <<EOF
+          tell application "$APP_NAME"
+            activate
+          end tell
+          tell application "System Events"
+            set frontmost of first process whose name is "$APP_NAME" to true
+          end tell
+          EOF
+          # Give extra time for the window to come forward
+          sleep 3
 
-      - name: Take screenshot of the desktop (should include the app window)
+      - name: Take screenshot (should capture the app window)
         run: screencapture -x screenshot.png
 
       - name: Upload screenshot artifact
