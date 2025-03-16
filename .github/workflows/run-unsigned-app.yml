@@ -22,6 +22,7 @@ jobs:
         run: |
           # Find the first .app bundle in the current directory
           APP=$(find . -maxdepth 1 -name "*.app" | head -n 1)
+          xattr -d -r com.apple.quarantine "$APP"
           echo "Launching app: $APP"
           open "$APP"
           # Wait 2 seconds for the app to launch and display its window
