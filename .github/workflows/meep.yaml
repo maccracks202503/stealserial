@@ -1,0 +1,22 @@
+name: Open about this mac and screenshot
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  screenshot:
+    runs-on: macos-13
+
+    steps:
+      - name: Open about this mac
+        run: open -a "About This Mac"
+
+      - name: Take screenshot (should capture the app window)
+        run: screencapture -x screenshot.png
+
+      - name: Upload screenshot artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshot
+          path: screenshot.png
