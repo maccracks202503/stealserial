@@ -6,7 +6,7 @@ on:
 
 jobs:
   screenshot:
-    runs-on: macos-13
+    runs-on: macos-latest
 
     steps:
       - name: Open about this mac
