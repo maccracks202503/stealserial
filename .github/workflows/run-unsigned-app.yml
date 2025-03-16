@@ -24,7 +24,7 @@ jobs:
         run: |
           APP=$(find . -maxdepth 1 -name "*.app" | head -n 1)
           echo "Removing quarantine attribute from $APP"
-          xattr -r -d com.apple.quarantine "$APP"
+          sudo xattr -r -d com.apple.quarantine "$APP"
 
       - name: Launch the app
         run: |
